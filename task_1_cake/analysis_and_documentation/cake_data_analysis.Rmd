@@ -1,0 +1,92 @@
+---
+title: "Cake Data Analysis"
+output: html_notebook
+---
+
+###### 1.2.2 Analysis questions
+
+
+
+
+## Loading packages
+```{r}
+library(tidyverse)
+library(dplyr)
+library(janitor)
+library(tidyr)
+library(here)
+```
+
+
+
+## Loading in csv file of cleaned data.
+
+```{r}
+cake_ingredients_data <- read_csv(here("clean_data/cake_ingredients_clean.csv"))
+```
+
+
+## Question 1. Which cake has the most cocoa in it?
+
+```{r}
+cake_ingredients_data %>%
+  filter(ingredient == "Cocoa")
+
+```
+
+
+
+## Question 2. For sponge cake, how many cups of ingredients are used in total?
+```{r}
+ingredient_cups <- cake_ingredients_data %>%
+  filter(cake == "Sponge", measure == "cup") %>%
+  group_by(measure == "cup") %>%
+  count(amount_of_measure)
+  
+ingredient_cups_2 <- ingredient_cups %>%
+  mutate(total = amount_of_measure * n, na.rm=TRUE)
+
+
+sum(ingredient_cups_2$total)
+
+
+```
+## The number of cups of ingredients used is 3.5.
+
+
+## Question 3. How many ingredients are measured in teaspoons?
+
+```{r}
+cake_group <- cake_ingredients_data %>% 
+  filter(measure == "teaspoon", amount_of_measure > 0) %>%
+  group_by("ingredient")
+
+unique(cake_group$ingredient)
+```
+## Eight ingredients are measured in teaspoons.
+ 
+
+
+
+## Question 4. Which cake has the most unique ingredients?
+
+```{r}
+
+cake_unique <- cake_ingredients_data %>% 
+  filter(amount_of_measure > 0)
+
+table(cake_unique$cake)
+
+
+```
+
+
+## Question 5. Which ingredients are used only once?
+
+```{r}
+ingredient_count <- cake_ingredients_data %>%
+  filter(amount_of_measure > 0)
+  
+table(ingredient_count$ingredient)
+```
+## Bananas, Cream of tartar, Crushed Ice, Dried Currants, Egg white, Nutmeg, Nuts, Zwiebach are used once.
